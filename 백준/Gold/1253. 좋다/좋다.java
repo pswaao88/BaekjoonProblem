@@ -12,27 +12,29 @@ public class Main {
         for(int i = 0; i < N; i++){
             number[i] = Integer.parseInt(st.nextToken());
         }
+        Arrays.sort(number);
+
         int result = 0;
         for(int i = 0; i < N; i++){
-            // 초기화
-            ArrayList<Integer> tmpNumber = new ArrayList<>();
-            for(int j = 0; j < N; j++){
-                if(j == i) continue;
-                tmpNumber.add(number[j]);
-            }
-            Collections.sort(tmpNumber);
-            // 변수 세팅
+            // 초기 변수 세팅
             int now = number[i];
+
             int left = 0;
-            int right = N-2;
+            if(left == i) left ++;
+
+            int right = N-1;
+            if(right == i) right --;
+
             boolean good = false;
             // 탐색
             while(left < right){
-                int sum = tmpNumber.get(left) + tmpNumber.get(right);
+                int sum = number[left] + number[right];
                 if(sum < now){
                     left++;
+                    if(left == i) left ++;
                 }else if(sum > now){
                     right--;
+                    if(right == i) right --;
                 }else{
                     good = true;
                     break;
