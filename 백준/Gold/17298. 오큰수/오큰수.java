@@ -18,7 +18,10 @@ public class Main {
         stackNGE.push(-1);
 
         for(int i = 1; i < N; i++){
-            if(number[i-1] < number[i]){
+            // top >= a_i 인 상황
+            if(!stackNumber.isEmpty() && stackNumber.peek() > number[i]){
+                stackNGE.push(stackNumber.peek());
+            }else{
                 while(!stackNumber.isEmpty()){
                     if(stackNumber.peek() > number[i]){
                         break;
@@ -26,19 +29,13 @@ public class Main {
                     stackNumber.pop();
                 }
                 if(stackNumber.isEmpty()){
-                    stackNumber.push(number[i]);
                     stackNGE.push(-1);
                 }else{
                     stackNGE.push(stackNumber.peek());
-                    stackNumber.push(number[i]);
-
                 }
-            }else if(number[i-1] > number[i]){
-                stackNumber.push(number[i]);
-                stackNGE.push(number[i-1]);
-            }else{
-                stackNGE.push(stackNGE.peek());
+
             }
+            stackNumber.push(number[i]);
         }
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < N; i++){
