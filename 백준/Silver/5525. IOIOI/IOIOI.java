@@ -7,31 +7,25 @@ public class Main {
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         int N = Integer.parseInt(br.readLine());
         int M = Integer.parseInt(br.readLine());
-        String S = br.readLine();
-        if(N >= 500000){
-            bw.write(Integer.toString(0));
-        }else{
-            HashMap<String, Integer> map = new HashMap<>();
-            for(int i = 0; i < M - (2 * N + 1) + 1; i++){
-                String now = S.substring(i, i + 2 * N + 1);
-                map.put(now, map.getOrDefault(now, 0) + 1);
+        char[] S = br.readLine().toCharArray();
+        int count = 0;
+        int OIcount = 0;
+        for(int i = 1; i < M - 1; i++){
+            if(S[i] =='O' && S[i-1] == 'I' && S[i+1] == 'I'){
+                OIcount++;
+                if(OIcount == N){
+                    count++;
+                    // 정답일 경우 다음 경우도 만족 할 수 도 있기 때문에 --
+                    OIcount--;
+                }
+                i++;
+            }else{
+                OIcount = 0;
             }
-            bw.write(Integer.toString(map.getOrDefault(makeIOI(N), 0)));
         }
+        bw.write(Integer.toString(count));
         bw.flush();
         bw.close();
         br.close();
     }
-    private static String makeIOI(int number){
-        StringBuilder sb = new StringBuilder(number * 2 + 1);
-        for(int i = 0; i < number * 2 + 1; i++){
-            if(i % 2 == 0){
-                sb.append("I");
-            }else{
-                sb.append("O");
-            }
-        }
-        return sb.toString();
-    }
-
 }
