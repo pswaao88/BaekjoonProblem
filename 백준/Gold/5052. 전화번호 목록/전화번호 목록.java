@@ -9,24 +9,23 @@ public class Main {
         StringBuilder sb = new StringBuilder();
         for(int t = 0; t < T; t++){
             int n = Integer.parseInt(br.readLine());
-            ArrayList<String> list = new ArrayList<>();
+            String[] sortedNumber = new String[n];
             for(int i = 0; i < n; i++){
-                list.add(br.readLine());
+                sortedNumber[i] = br.readLine();
             }
-            list.sort((o1, o2) -> o2.length() - o1.length());
-            HashSet<String> set = new HashSet<>();
+            Arrays.sort(sortedNumber);
+
             boolean yes = true;
-            for(int i = 0; i < n; i++){
-                String now = list.get(i);
-                if(set.contains(now)){
+            for(int i = 0; i < n-1; i++){
+                String now = sortedNumber[i];
+                String next = sortedNumber[i+1];
+                if(now.length() > next.length()) continue;
+                String prefix = next.substring(0, now.length());
+                if(prefix.equals(now)){
                     yes = false;
                     break;
                 }
 
-                for(int j = 1; j <= now.length(); j++){
-                    String next = now.substring(0, j);
-                    set.add(next);
-                }
             }
             if(yes) sb.append("YES").append("\n");
             else sb.append("NO").append("\n");
