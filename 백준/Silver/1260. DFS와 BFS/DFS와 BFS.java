@@ -2,83 +2,66 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int N,M;
-    static ArrayList<ArrayList<Integer>> graphBFS = new ArrayList<>();
-    static ArrayList<ArrayList<Integer>> graphDFS = new ArrayList<>();
-    public static void main(String[] args)throws IOException {
+    static ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+    static StringBuilder sb = new StringBuilder();
+    static boolean[] visited;
+    static int N;
+    public static void main(String[] args)throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
         int V = Integer.parseInt(st.nextToken());
 
         for(int i = 0; i <= N; i++){
-            graphBFS.add(new ArrayList<>());
-            graphDFS.add(new ArrayList<>());
+            graph.add(new ArrayList<>());
         }
 
         for(int i = 0; i < M; i++){
             st = new StringTokenizer(br.readLine());
             int a = Integer.parseInt(st.nextToken());
             int b = Integer.parseInt(st.nextToken());
-            graphBFS.get(a).add(b);
-            graphBFS.get(b).add(a);
-
-            graphDFS.get(a).add(b);
-            graphDFS.get(b).add(a);
+            graph.get(a).add(b);
+            graph.get(b).add(a);
         }
-
-        for(int i = 0; i <= N; i++){
-            Collections.sort(graphBFS.get(i));
+        for(int i = 1; i <= N; i++){
+            Collections.sort(graph.get(i));
         }
-        for(int i = 0; i <= N; i++){
-            Collections.sort(graphDFS.get(i), Collections.reverseOrder());
-        }
-        bw.write(dfs(V));
-        bw.newLine();
-        bw.write(bfs(V));
+        visited = new boolean[N+1];
+        dfs(V);
+        sb.append("\n");
+        visited = new boolean[N+1];
+        bfs(V);
+        bw.write(sb.toString());
         bw.flush();
         bw.close();
         br.close();
     }
-    static String bfs(int x){
-        StringBuilder sb = new StringBuilder();
-        boolean[] visited = new boolean[N+1];
-
-        Queue<Integer> q = new LinkedList<>();
-        q.add(x);
+    static void dfs(int x){
+        if(visited[x]) return;
         visited[x] = true;
+        sb.append(x).append(" ");
+        for(int i = 0; i < graph.get(x).size(); i++){
+            int next = graph.get(x).get(i);
+            dfs(next);
+        }
+    }
 
+    static void bfs(int x){
+        Queue<Integer> q = new LinkedList<>();
+        visited[x] = true;
+        q.add(x);
         while(!q.isEmpty()){
-            int now = q.poll();
+            int now = q.remove();
             sb.append(now).append(" ");
-            for(int i = 0; i < graphBFS.get(now).size(); i++){
-                int next = graphBFS.get(now).get(i);
+            for(int i = 0; i < graph.get(now).size(); i++){
+                int next = graph.get(now).get(i);
                 if(visited[next]) continue;
                 visited[next] = true;
                 q.add(next);
             }
         }
-        return sb.toString().trim();
-    }
-    static String dfs(int x){
-        StringBuilder sb = new StringBuilder();
-        boolean[] visited = new boolean[N+1];
-
-        Stack<Integer> stack = new Stack<>();
-        stack.push(x);
-
-        while(!stack.isEmpty()){
-            int now = stack.pop();
-            if(visited[now]) continue;
-            visited[now] = true;
-            sb.append(now).append(" ");
-            for(int i = 0; i < graphDFS.get(now).size(); i++){
-                int next = graphDFS.get(now).get(i);
-                stack.push(next);
-            }
-        }
-        return sb.toString().trim();
     }
 }
