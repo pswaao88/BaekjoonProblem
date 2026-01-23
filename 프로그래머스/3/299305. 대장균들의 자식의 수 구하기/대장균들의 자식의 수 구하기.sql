@@ -1,0 +1,6 @@
+SELECT 
+    parent.ID,
+    (SELECT COUNT(*) FROM ECOLI_DATA child WHERE child.PARENT_ID = parent.ID) 
+    AS CHILD_COUNT
+FROM ECOLI_DATA parent
+ORDER BY parent.ID ASC;
