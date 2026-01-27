@@ -20,7 +20,7 @@ public class Main {
             cost[i] = Integer.parseInt(st.nextToken());
         }
 
-        int min = Integer.MAX_VALUE;
+        long min = Integer.MAX_VALUE;
         long result = 0;
         for(int i = 0; i < N-1; i++){
             min = Math.min(min, cost[i]);
