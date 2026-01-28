@@ -2,94 +2,83 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int A = 0;
-    static int C = 0;
-    static int G = 0;
-    static int T = 0;
-    static int[] dna;
-    static int count = 0;
-    public static void main(String[] args)throws IOException {
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-
         StringTokenizer st = new StringTokenizer(br.readLine());
         int S = Integer.parseInt(st.nextToken());
         int P = Integer.parseInt(st.nextToken());
-        String s = br.readLine();
 
+        char[] DNA = br.readLine().toCharArray();
         st = new StringTokenizer(br.readLine());
-        dna = new int[4];
+        int[] answer = new int[4];
         for(int i = 0; i < 4; i++){
-            dna[i] = Integer.parseInt(st.nextToken());
+            answer[i] = Integer.parseInt(st.nextToken());
         }
-
-        // 맨처음 초기화
+        // 초기화 후 한번 검사
+        int result = 0;
+        int[] ACGT = new int[4];
         for(int i = 0; i < P; i++){
-            char now = s.charAt(i);
-            plusDna(now);
+            switch(DNA[i]){
+                case 'A':
+                    ACGT[0]++;
+                    break;
+                case 'C':
+                    ACGT[1]++;
+                    break;
+                case 'G':
+                    ACGT[2]++;
+                    break;
+                case 'T':
+                    ACGT[3]++;
+                    break;
+            }
         }
-        isOk();
-        // left랑 right는 현재 가리키는 index
-        for(int i = 1; i < S - P + 1; i++){
-            int left = i;
-            int right = left + P - 1;
-            next(left, right, s);
+        result += yes(ACGT, answer);
+
+        for(int i = 0; i < S - P; i++){
+            //i번째 지우고 i + p 번째 추가
+            char before = DNA[i];
+            char after = DNA[i + P];
+            switch(before){
+                case 'A':
+                    ACGT[0]--;
+                    break;
+                case 'C':
+                    ACGT[1]--;
+                    break;
+                case 'G':
+                    ACGT[2]--;
+                    break;
+                case 'T':
+                    ACGT[3]--;
+                    break;
+            }
+            switch(after){
+                case 'A':
+                    ACGT[0]++;
+                    break;
+                case 'C':
+                    ACGT[1]++;
+                    break;
+                case 'G':
+                    ACGT[2]++;
+                    break;
+                case 'T':
+                    ACGT[3]++;
+                    break;
+            }
+            result += yes(ACGT, answer);
         }
-        bw.write(Integer.toString(count));
+        bw.write(Integer.toString(result));
         bw.flush();
-        bw.close();
-        br.close();
+    }
+    static int yes(int[] ACGT, int[] answer){
+        if(ACGT[0] < answer[0]) return 0;
+        if(ACGT[1] < answer[1]) return 0;
+        if(ACGT[2] < answer[2]) return 0;
+        if(ACGT[3] < answer[3]) return 0;
+        return 1;
     }
 
-    private static void isOk(){
-        if (A >= dna[0] && C >= dna[1] && G >= dna[2] && T >= dna[3]){
-            count++;
-        }
-    }
-
-    private static void next(int left, int right, String target){
-        char minus = target.charAt(left-1);
-        char plus = target.charAt(right);
-        minusDna(minus);
-        plusDna(plus);
-        isOk();
-    }
-
-    private static void minusDna(char targetDna){
-        switch(targetDna){
-            case 'A':
-                A--;
-                break;
-            case 'C':
-                C--;
-                break;
-            case 'T':
-                T--;
-                break;
-            case 'G':
-                G--;
-                break;
-            default:
-                break;
-        }
-    }
-
-    private static void plusDna(char targetDna){
-        switch(targetDna){
-            case 'A':
-                A++;
-                break;
-            case 'C':
-                C++;
-                break;
-            case 'T':
-                T++;
-                break;
-            case 'G':
-                G++;
-                break;
-            default:
-                break;
-        }
-    }
 }
