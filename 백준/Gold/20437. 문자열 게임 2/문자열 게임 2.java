@@ -2,43 +2,42 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args)throws IOException{
+    public static void main(String[] args)throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         int T = Integer.parseInt(br.readLine());
         StringBuilder sb = new StringBuilder();
-        for(int t = 0; t < T; t++){
-            char[] W = br.readLine().toCharArray();
+        while(T-->0){
+            char[] s = br.readLine().toCharArray();
             int K = Integer.parseInt(br.readLine());
-            HashMap<Character, List<Integer>> map = new HashMap<>();
-            for(int i = 0; i < W.length; i++){
-                List<Integer> now = map.getOrDefault(W[i], new ArrayList<>());
-                now.add(i);
-                map.put(W[i],now);
+            HashMap<Character, ArrayList<Integer>> map = new HashMap<>();
+            for(int i = 0; i < s.length; i++){
+                char now = s[i];
+                ArrayList<Integer> nowList = map.getOrDefault(now, new ArrayList<>());
+                nowList.add(i);
+                map.put(now, nowList);
             }
             int min = 987654321;
             int max = -1;
-            for(int i = 0; i < 26; i++){
-                char now = (char)('a' + i);
-                List<Integer> nowList = map.getOrDefault(now, new ArrayList<>());
-                if(nowList.size() < K) continue;
-                for(int j = 0; j < nowList.size() - K + 1; j++){
+
+            for(Map.Entry<Character, ArrayList<Integer>> entry : map.entrySet()){
+                ArrayList<Integer> now = entry.getValue();
+                if(now.size() < K) continue;
+                for(int j = 0; j <= now.size() - K; j++){
                     int left = j;
-                    int right = j + K - 1;
-                    int nowLength = nowList.get(right) - nowList.get(left) + 1;
-                    min = Math.min(min, nowLength);
-                    max = Math.max(max, nowLength);
+                    int right = left + K - 1;
+                    min = Math.min(min, now.get(right) - now.get(left) + 1);
+                    max = Math.max(max, now.get(right) - now.get(left) + 1);
                 }
             }
-            if(min != 987654321){
-                sb.append(min).append(" ").append(max).append("\n");
+            if(min == 987654321){
+                sb.append("-1\n");
             }else{
-                sb.append(-1).append("\n");
+                sb.append(min).append(" ").append(max).append("\n");
             }
         }
         bw.write(sb.toString());
         bw.flush();
-        bw.close();
-        br.close();
     }
+
 }
