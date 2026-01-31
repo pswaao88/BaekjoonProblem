@@ -1,0 +1,57 @@
+WItH DEVELOPER_WITH_SKILL AS(
+    SELECT 
+        d.ID,
+        d.FIRST_NAME,
+        d.LAST_NAME,
+        d.EMAIL,
+        d.SKILL_CODE,
+        s.NAME AS SKILL_NAME,
+        s.CATEGORY,
+        s.CODE
+    FROM DEVELOPERS  d
+    INNER JOIN SKILLCODES s
+    ON d.SKILL_CODE & s.CODE > 0
+), FRONT AS(
+    SELECT ID
+    FROM DEVELOPER_WITH_SKILL 
+    WHERE CATEGORY = 'Front End'
+    GROUP BY ID
+), PYTHON AS(
+    SELECT ID
+    FROM DEVELOPER_WITH_SKILL 
+    WHERE SKILL_NAME = 'Python'
+    GROUP BY ID
+), A AS(
+    SELECT 
+        p.ID,
+        'A' AS GRADE
+    FROM FRONT f
+    INNER JOIN PYTHON p
+    ON p.ID = f.ID
+), B AS(
+    SELECT 
+        ID,
+        'B' AS GRADE
+    FROM DEVELOPER_WITH_SKILL 
+    WHERE SKILL_NAME = 'C#' AND ID NOT IN(SELECT ID FROM A)
+    GROUP BY ID
+), C AS(
+    SELECT
+        ID,
+        'C' AS GRADE
+    FROM FRONT
+    WHERE ID NOT IN(SELECT ID FROM A UNION SELECT ID FROM B)
+), TOTAL AS (
+    SELECT a.GRADE, a.ID FROM A a
+    UNION
+    SELECT b.GRADE, b.ID FROM B b
+    UNION 
+    SELECT c.GRADE, c.ID FROM C c
+)
+
+SELECT 
+    t.GRADE, t.ID, d.EMAIL 
+FROM TOTAL t
+INNER JOIN DEVELOPERS d
+ON t.ID = d.ID
+ORDER BY 1, 2;
