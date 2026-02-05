@@ -1,0 +1,13 @@
+-- 중성화x -> 중성화 O ID 구하기
+SELECT
+    ai.ANIMAL_ID,
+    ai.ANIMAL_TYPE,
+    ai.NAME
+FROM ANIMAL_INS ai
+INNER JOIN ANIMAL_OUTS ao
+ON ai.ANIMAL_ID = ao.ANIMAL_ID 
+AND ai.SEX_UPON_INTAKE LIKE '%Intact%'
+AND (ao.SEX_UPON_OUTCOME LIKE '%Spayed%' 
+     OR ao.SEX_UPON_OUTCOME LIKE '%Neutered%') 
+ORDER BY ai.ANIMAL_ID ASC;
+    
