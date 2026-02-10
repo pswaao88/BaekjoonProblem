@@ -2,45 +2,34 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+    // 인디그리 계산용 그래프
     static ArrayList<ArrayList<Integer>> buildings = new ArrayList<>();
+    static int[] indegree;
     static int[] time;
     static int[] totalTime;
-    public static void main(String[] args)throws IOException{
+    static int N;
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        int N = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
         for(int i = 0; i <= N; i++){
             buildings.add(new ArrayList<>());
         }
         time = new int[N+1];
         totalTime = new int[N+1];
+        indegree = new int[N+1];
 
         StringTokenizer st;
         for(int i = 1; i <= N; i++){
             st = new StringTokenizer(br.readLine());
-            ArrayList<Integer> now = buildings.get(i);
             time[i] = Integer.parseInt(st.nextToken());
             int beforeBuilding;
             while((beforeBuilding = Integer.parseInt(st.nextToken())) != -1){
-                now.add(beforeBuilding);
+                buildings.get(beforeBuilding).add(i);
+                indegree[i]++;
             }
         }
-        for(int i = 1; i <= N; i++){
-            if(buildings.get(i).size() == 0){
-                totalTime[i] = time[i];
-            }
-        }
-        while(true){
-            boolean canBreak = true;
-            for(int i = 1; i <= N; i++){
-                // 지을 수 있을 때
-                if(canBuild(i)){
-                    totalTime[i] = time[i] + findMaxTime(i);
-                    canBreak = false;
-                }
-            }
-            if(canBreak) break;
-        }
+        findTime();
         StringBuilder sb = new StringBuilder();
         for(int i = 1; i <= N; i++){
             sb.append(totalTime[i]).append("\n");
@@ -48,19 +37,29 @@ public class Main {
         bw.write(sb.toString());
         bw.flush();
     }
-    static int findMaxTime(int nowBuilding){
-        int max = 0;
-        for(int i = 0; i < buildings.get(nowBuilding).size(); i++){
-            max = Math.max(max, totalTime[buildings.get(nowBuilding).get(i)]);
+    static void findTime(){
+        Queue<Integer> q = new LinkedList<>();
+        for(int i = 1; i <= N; i++){
+            if(indegree[i] == 0){
+                q.add(i);
+            }
         }
-        return max;
-    }
-    static boolean canBuild(int nowBuilding){
-        if(totalTime[nowBuilding] != 0) return false;
-        for(int i = 0; i < buildings.get(nowBuilding).size(); i++){
-            // 아직 안지어진거임
-            if(totalTime[buildings.get(nowBuilding).get(i)] == 0) return false;
+
+        while(!q.isEmpty()){
+            // 시간 갱신
+            int now = q.remove();
+            totalTime[now] += time[now];
+
+            // now와 연결된 indegree 감소
+            for(int i = 0; i < buildings.get(now).size(); i++){
+                int next = buildings.get(now).get(i);
+                totalTime[next] = Math.max(totalTime[next], totalTime[now]);
+                indegree[next]--;
+                if(indegree[buildings.get(now).get(i)] == 0){
+                    q.add(next);
+                }
+            }
+
         }
-        return true;
     }
 }
