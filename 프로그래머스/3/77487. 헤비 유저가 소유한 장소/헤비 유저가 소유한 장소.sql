@@ -1,0 +1,15 @@
+WITH A AS(
+    SELECT 
+        HOST_ID
+    FROM PLACES
+    GROUP BY HOST_ID
+    HAVING COUNT(1) >= 2
+)
+SELECT
+    p.ID,
+    p.NAME,
+    p.HOST_ID
+FROM PLACES p
+INNER JOIN A a
+ON p.HOST_ID = a.HOST_ID
+ORDER BY p.ID ASC;
