@@ -37,15 +37,13 @@ public class Main {
         bw.flush();
     }
     static int find(){
-        PriorityQueue<Coordinate> pq = new PriorityQueue<>((c1, c2) -> {
-            return c1.value - c2.value;
-        });
+        Queue<Coordinate> q = new LinkedList<>();
 
-        pq.add(new Coordinate(startX, startY, 0, 0));
+        q.add(new Coordinate(startX, startY, 0, 0));
         visit[startX][startY][0] = 0;
 
-        while(!pq.isEmpty()){
-            Coordinate now = pq.remove();
+        while(!q.isEmpty()){
+            Coordinate now = q.remove();
             for(int i = 0; i < 4; i++){
                 int nextX = now.x + dx[i];
                 int nextY = now.y + dy[i];
@@ -54,14 +52,14 @@ public class Main {
                 if(map[nextX][nextY] == '.'){
                     if(visit[nextX][nextY][nextVisit] == -1 || visit[nextX][nextY][nextVisit] > now.value + 1){
                         visit[nextX][nextY][nextVisit] = visit[now.x][now.y][now.visit] + 1;
-                        pq.add(new Coordinate(nextX, nextY, nextVisit, visit[nextX][nextY][nextVisit]));
+                        q.add(new Coordinate(nextX, nextY, nextVisit, visit[nextX][nextY][nextVisit]));
                     }
                 }else if('a' <= map[nextX][nextY] && map[nextX][nextY] <= 'f'){ // 열쇠 갱신 후 최소값 갱신
                     int index = map[nextX][nextY] - 'a';
                     nextVisit = nextVisit | (1 << index);
                     if(visit[nextX][nextY][nextVisit] == -1 || visit[nextX][nextY][nextVisit] > now.value + 1){
                         visit[nextX][nextY][nextVisit] = now.value + 1;
-                        pq.add(new Coordinate(nextX, nextY, nextVisit, visit[nextX][nextY][nextVisit]));
+                        q.add(new Coordinate(nextX, nextY, nextVisit, visit[nextX][nextY][nextVisit]));
                     }
                 }else if('A' <= map[nextX][nextY] && map[nextX][nextY] <= 'F'){ // 열쇠로 열리면 검사
                     int index = map[nextX][nextY] - 'A';
@@ -69,7 +67,7 @@ public class Main {
                     if((nextVisit & (1 << index)) != 0){
                         if(visit[nextX][nextY][nextVisit] == -1 || visit[nextX][nextY][nextVisit] > now.value + 1){
                             visit[nextX][nextY][nextVisit] = now.value + 1;
-                            pq.add(new Coordinate(nextX, nextY, nextVisit, visit[nextX][nextY][nextVisit]));
+                            q.add(new Coordinate(nextX, nextY, nextVisit, visit[nextX][nextY][nextVisit]));
                         }
                     }
                 }else if(map[nextX][nextY] == '1'){ // 탈출
