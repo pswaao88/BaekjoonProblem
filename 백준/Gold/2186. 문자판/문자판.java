@@ -32,10 +32,11 @@ public class Main {
         int count = 0;
 
         // 초기화
-
         for(int row = 0; row < N; row++){
             for(int col = 0; col < M; col++){
-                result[row][col][0]++;
+                if(board[row][col] == target.charAt(0)){
+                    result[row][col][0]++;
+                }
             }
         }
 
