@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Main {
     static int maxX, maxY, targetX, targetY;
-    static boolean[][] visited;
+    static HashSet<Long> set = new HashSet<>();
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -14,7 +14,6 @@ public class Main {
         targetX = Integer.parseInt(st.nextToken());
         targetY = Integer.parseInt(st.nextToken());
 
-        visited = new boolean[maxX+1][maxY+1];
         int result = find();
         bw.write(Integer.toString(result));
         bw.flush();
@@ -22,7 +21,8 @@ public class Main {
     static int find(){
         Queue<Visit> q = new LinkedList<>();
         q.add(new Visit(0, 0, 0));
-        visited[0][0] = true;
+
+        set.add(0L);
 
         while(!q.isEmpty()){
             Visit now = q.remove();
@@ -45,9 +45,10 @@ public class Main {
                     tmp.yToxM();
                 }
                 tmp.count++;
-                if(visited[tmp.x][tmp.y]) continue;
+                long check = (((long)tmp.x << 32)) | tmp.y;
+                if(set.contains(check)) continue;
                 q.add(tmp);
-                visited[tmp.x][tmp.y] = true;
+                set.add(check);
             }
         }
         return -1;
